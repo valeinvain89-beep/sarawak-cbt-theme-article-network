@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sarawak CBT Blockchain Theme Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3f6f6; --card:#ffffff; --ink:#12292b; --muted:#56696b; --line:#cfdada;
+  --accent:#1f6f6b; --accent-soft:#dcecea; --tension:#b4630a; --tension-soft:#fbeedb; --gap:#8a3a52; --gap-soft:#f6e3e9;
+  --display:"Sora","Segoe UI",system-ui,sans-serif; --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e1a1b; --card:#16272a; --ink:#e6efee; --muted:#9db1b1; --line:#2c4144;
+    --accent:#5cc2b8; --accent-soft:#1d3b3a; --tension:#f0b05a; --tension-soft:#3a2c14; --gap:#e995ad; --gap-soft:#3a1f29;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e1a1b; --card:#16272a; --ink:#e6efee; --muted:#9db1b1; --line:#2c4144;
+  --accent:#5cc2b8; --accent-soft:#1d3b3a; --tension:#f0b05a; --tension-soft:#3a2c14; --gap:#e995ad; --gap-soft:#3a1f29;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 18px 40px}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:14px}
+.eyebrow{font-family:var(--display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{font-family:var(--display);font-size:clamp(20px,2.6vw,28px);line-height:1.2;margin:4px 0 0;max-width:22em;text-wrap:balance}
+.stats{display:flex;gap:18px;flex-wrap:wrap}
+.stat b{display:block;font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+nav button{font:600 14px var(--display);padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--tension);outline-offset:2px}
+.view{display:none}
+.view.on{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.view.on{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h2{font-family:var(--display);font-size:18px;margin:0 0 4px;text-wrap:balance}
+.hint{font-size:13px;color:var(--muted);margin:0 0 8px}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:var(--body);fill:var(--ink)}
+.node{cursor:pointer}
+.node rect,.node circle{fill:var(--card);stroke:var(--accent);stroke-width:2;transition:fill .15s}
+.node.sel rect,.node.sel circle{fill:var(--accent)}
+.node.sel text{fill:var(--paper)}
+.node text{font-weight:600;font-size:14px;pointer-events:none}
+.node .n{font-size:12px;font-weight:400;fill:var(--muted)}
+.node.sel .n{fill:var(--paper)}
+.core circle{fill:var(--accent-soft);stroke:var(--accent)}
+.core text{font-family:var(--display);font-size:14px;font-weight:600}
+.link{stroke:var(--line);stroke-width:2;fill:none}
+.link.hot{stroke:var(--accent);stroke-width:3}
+.leaf rect{fill:var(--paper);stroke:var(--line);stroke-width:1}
+.leaf text{font-size:11.5px;fill:var(--muted)}
+.block{border-left:4px solid var(--accent);background:var(--accent-soft);padding:9px 12px;border-radius:0 8px 8px 0;margin:10px 0}
+.block.t{border-color:var(--tension);background:var(--tension-soft)}
+.block.g{border-color:var(--gap);background:var(--gap-soft)}
+.block h3{font:600 12px var(--display);letter-spacing:.06em;text-transform:uppercase;margin:0 0 3px}
+.block p{margin:0;font-size:15px}
+.src{font-size:13px;color:var(--muted);margin:8px 0 0}
+.pill{display:inline-block;font:600 12px var(--display);padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin:0 6px 6px 0}
+.chain{display:grid;gap:8px}
+.step{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;color:var(--ink);font:inherit}
+.step b{font-family:var(--display);font-size:15px}
+.step small{display:block;color:var(--muted);font-size:13px}
+.step .k{font:700 16px var(--display);color:var(--accent);font-variant-numeric:tabular-nums}
+.step.sel{border-color:var(--accent);background:var(--accent-soft)}
+.arrow{justify-self:center;color:var(--accent);font-size:14px;line-height:1}
+.plist{display:grid;gap:6px;margin-top:8px}
+.plist button{text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer}
+.plist button.sel{border-color:var(--accent);background:var(--accent-soft)}
+.plist b{font-family:var(--display);color:var(--accent);margin-right:6px}
+.edge{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+.edge.hot{stroke:var(--tension);stroke-width:4;marker-end:url(#ahh)}
+.box rect{fill:var(--card);stroke:var(--accent);stroke-width:2}
+.box.new rect{fill:var(--accent-soft)}
+.box text{font-size:13px;font-weight:600}
+.elab{font-size:12px;font-weight:700;fill:var(--accent)}
+.bars{display:grid;gap:6px;margin:8px 0 14px}
+.bar{display:grid;grid-template-columns:minmax(120px,38%) 1fr 36px;gap:8px;align-items:center;font-size:14px}
+.bar i{display:block;height:14px;border-radius:3px;background:var(--accent)}
+.bar em{font-style:normal;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.years{display:flex;align-items:flex-end;gap:8px;height:150px;margin:10px 0 4px;border-bottom:1px solid var(--line)}
+.years div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:0;font-size:12px;font-variant-numeric:tabular-nums}
+.years i{display:block;width:100%}
+.years .j{background:var(--accent)} .years .c{background:var(--tension)} .years .r{background:var(--gap)}
+.ylab{display:flex;gap:8px;font-size:12px;color:var(--muted)} .ylab span{flex:1;text-align:center}
+.legend{font-size:13px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+footer{margin-top:18px;font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="eyebrow">Systematic literature review · BBCON 2026</div>
+    <h1>Blockchain for Trust and Verification in Sarawak Community-Based Tourism</h1>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>847</b><span>records identified</span></div>
+    <div class="stat"><b>256</b><span>in the evidence map</span></div>
+    <div class="stat"><b>13</b><span>Malaysian reports</span></div>
+    <div class="stat"><b>0</b><span>set in Sarawak with blockchain</span></div>
+  </div>
+</header>
+
+<nav role="tablist" aria-label="Views">
+  <button role="tab" data-v="themes" id="tab-themes">Theme map</button>
+  <button role="tab" data-v="chain" id="tab-chain">Chain of reasoning</button>
+  <button role="tab" data-v="model" id="tab-model">Proposed model</button>
+  <button role="tab" data-v="evidence" id="tab-evidence">Evidence base</button>
+</nav>
+
+<section class="view" id="themes">
+  <div class="card">
+    <h2>Five emergent themes</h2>
+    <p class="hint">Select a theme to read its finding, the tension in the evidence, the gap and the next step.</p>
+    <svg id="map" viewBox="0 0 900 600" role="group" aria-label="Mind map of five themes"></svg>
+  </div>
+  <div class="card" id="tpanel" aria-live="polite"></div>
+</section>
+
+<section class="view" id="chain">
+  <div class="card">
+    <h2>From problem to research agenda</h2>
+    <p class="hint">Each link in the chain rests on the one before it. Select a link to see what it contributes.</p>
+    <div class="chain" id="clist"></div>
+  </div>
+  <div class="card" id="cpanel" aria-live="polite"></div>
+</section>
+
+<section class="view" id="model">
+  <div class="card">
+    <h2>Proposed Blockchain Acceptance Model</h2>
+    <p class="hint">Every arrow is a hypothesis for later testing, not a result. Shaded boxes are the constructs this review adds.</p>
+    <svg id="msvg" viewBox="0 0 900 430" role="group" aria-label="Model diagram">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor" style="color:var(--muted)"/></marker>
+        <marker id="ahh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor" style="color:var(--tension)"/></marker>
+      </defs>
+    </svg>
+  </div>
+  <div class="card">
+    <h2>Eight propositions</h2>
+    <p class="hint">Select a proposition to highlight its path and see what it rests on.</p>
+    <div class="plist" id="plist"></div>
+    <div id="ppanel" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="view" id="evidence">
+  <div class="card">
+    <h2>Evidence map by year and document type (n = 256)</h2>
+    <div class="years" id="years"></div>
+    <div class="ylab" id="ylab"></div>
+    <p class="legend"><span><i style="background:var(--accent)"></i>Journal articles (149)</span><span><i style="background:var(--tension)"></i>Conference papers (98)</span><span><i style="background:var(--gap)"></i>Reviews (9)</span></p>
+    <p class="hint">2026 covers records indexed up to the October 2026 exports.</p>
+    <h2 style="margin-top:16px">Study type</h2>
+    <div class="bars" id="types"></div>
+  </div>
+  <div class="card">
+    <h2>Primary theme of each record</h2>
+    <div class="bars" id="topics"></div>
+    <h2 style="margin-top:16px">Screening quality</h2>
+    <div class="block"><h3>Tourism blockchain sample</h3><p>A second reviewer independently screened a random 10% sample (51 of 504 records). Agreement 88.2%, Cohen’s κ = 0.76.</p></div>
+    <div class="block t"><h3>Malaysian records</h3><p>All 25 records double-screened. Agreement 79%, κ = 0.23 (fair); every disagreement was resolved by discussion.</p></div>
+    <div class="block g"><h3>Read with care</h3><p>The 256 records were screened on title and abstract. Full-text appraisal is still outstanding, so this is an evidence map, not a set of appraised studies.</p></div>
+  </div>
+</section>
+
+<footer>Source: Nurfazlina Haris et al., systematic literature review reported with PRISMA 2020 (searches exported between 19 and 23 October 2026). Findings from the tourism blockchain stream are reported from abstracts.</footer>
+</div>
+
+<script>
+const T=[
+ {id:'t1',name:['Acceptance','and trust'],n:'48 records + 10 studies',
+  title:'Theme 1 · Acceptance and trust findings agree on benefits and conflict on the rest',
+  f:'Expected benefit is the most consistent predictor of intention to adopt blockchain, across sectors and countries.',
+  t:'Facilitating conditions were the strongest factor in Jeju yet not significant in three other studies. Among 200 Traveloka users, security and transparency did not significantly raise trust.',
+  g:'No study samples community-tourism practitioners, and intention is measured far more often than actual use.',
+  x:'Test the paths with Sarawak practitioners and report null results.',
+  s:'Norbu et al. (2025); Erraach et al. (2026); Chang et al. (2022); Anita et al. (2026)',leaf:['Benefit matters','Trust results mixed','Intention, not use']},
+ {id:'t2',name:['Transactions','and bookings'],n:'52 records',
+  title:'Theme 2 · Booking verification has behavioural evidence, mostly from consumers',
+  f:'Bookings are the best-evidenced task: working prototypes plus consumer experiments. Consumers want discounts, extra services and a known brand.',
+  t:'A UK hotel panel links blockchain adoption with higher satisfaction, yet US hotel sales on Booking.com fell after cryptocurrency payment was added.',
+  g:'No study shows fewer booking disputes or less payment fraud for small community operators.',
+  x:'Measure task completion and how discrepancies are resolved.',
+  s:'Dong et al. (2020); Strebinger & Treiblmaier (2022a, 2022b, 2024); Agag & Alboqami (2026); Gao et al. (2022)',leaf:['Prototypes exist','Consumers want extras','Outcomes unclear']},
+ {id:'t3',name:['Review','authenticity'],n:'15 records',
+  title:'Theme 3 · Review authenticity rests on proposed frameworks',
+  f:'Blockchain review systems are proposed often, as frameworks and models. One survey of 1,200 Swiss tourists tests booking intention for blockchain-verified hotel reviews.',
+  t:'Token rewards can raise the number of reviews submitted. They cannot show that a review is genuine.',
+  g:'No field evaluation shows that a blockchain review system reduced fake reviews.',
+  x:'Link each review to a verified service event and test whether users understand its origin.',
+  s:'Karode et al. (2020); Bulchand-Gidumal & Melián-González (2024); Mohammadi et al. (2026); Kilp & Stuber-Berries (2026)',leaf:['Designs, not trials','Rewards ≠ genuine','One consumer survey']},
+ {id:'t4',name:['Service authenticity','and provenance'],n:'21 records',
+  title:'Theme 4 · Service authenticity and provenance are shown in cases and models',
+  f:'Provenance is demonstrated for products: local food in Sardinia and agri-tourism certification in Calabria. Community currency trials (Lanyu Island, LocalToken) treat governance as a design requirement.',
+  t:'An immutable record preserves a claim. It does not prove the claim was true when entered.',
+  g:'Service, training and competence claims in community tourism remain untested.',
+  x:'Define who issues a claim, what evidence backs it and who may correct it.',
+  s:'Baralla et al. (2021); Felicetti et al. (2026); Chung & Chang (2021); Önder et al. (2026)',leaf:['Products, not services','Record ≠ truth','Issuer must be credible']},
+ {id:'t5',name:['Malaysian and','Sarawak context'],n:'13 reports, 4 in Sarawak',
+  title:'Theme 5 · Community tourism shows uneven readiness and relational trust',
+  f:'Digital capability is uneven and depends on family, agency and training support. Trust is built through dialogue, reciprocity and fair rules.',
+  t:'In cooperative-managed homestays, digitalisation ranked 13th of 14 sustainability criteria. Demand for technology cannot be assumed.',
+  g:'None of the 13 Malaysian reports tests blockchain, and no evidence covers tourism cooperatives adopting it.',
+  x:'Co-design governance with koperasi; evaluate participation and benefit sharing.',
+  s:'Wahid et al. (2026); Lim et al. (2026); Jaafar et al. (2020); Zulkifley et al. (2026)',leaf:['Uneven readiness','Relational trust','Silent on blockchain']}
+];
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const map=document.getElementById('map'),CX=450,CY=300,R=205;
+const pos=T.map((t,i)=>{const a=(-90+i*72)*Math.PI/180;return{x:CX+R*Math.cos(a)*1.45,y:CY+R*Math.sin(a)}});
+const links=pos.map(p=>el('line',{class:'link',x1:CX,y1:CY,x2:p.x,y2:p.y},map));
+const leafG=el('g',{},map);
+const core=el('g',{class:'core'},map);el('circle',{cx:CX,cy:CY,r:66},core);
+['Trust and','verification','in Sarawak CBT'].forEach((s,i)=>el('text',{x:CX,y:CY-14+i*18,'text-anchor':'middle'},core,s));
+const nodes=T.map((t,i)=>{const p=pos[i],g=el('g',{class:'node',tabindex:0,role:'button','aria-label':t.name.join(' ')},map);
+  el('rect',{x:p.x-88,y:p.y-36,width:176,height:72,rx:12},g);
+  t.name.forEach((s,j)=>el('text',{x:p.x,y:p.y-12+j*17,'text-anchor':'middle'},g,s));
+  el('text',{class:'n',x:p.x,y:p.y+26,'text-anchor':'middle'},g,t.n);
+  g.addEventListener('click',()=>pick(i));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(i)}});return g});
+function pick(i){const t=T[i],p=pos[i];
+  nodes.forEach((n,j)=>n.classList.toggle('sel',j===i));links.forEach((l,j)=>l.classList.toggle('hot',j===i));
+  leafG.innerHTML='';
+  const below=p.y<CY+60, dy=below?58:-58;
+  t.leaf.forEach((s,k)=>{const x=Math.min(820,Math.max(80,p.x+(k-1)*150)),y=p.y+dy;const g=el('g',{class:'leaf'},leafG);
+    el('line',{class:'link',x1:p.x,y1:p.y+(below?36:-36),x2:x,y2:y+(below?-13:13),'stroke-width':1},g);
+    el('rect',{x:x-68,y:y-13,width:136,height:26,rx:13},g);el('text',{x:x,y:y+4,'text-anchor':'middle'},g,s)});
+  document.getElementById('tpanel').innerHTML=`<span class="pill">${t.n}</span><h2>${t.title}</h2>
+   <div class="block"><h3>What the evidence shows</h3><p>${t.f}</p></div>
+   <div class="block t"><h3>Tension</h3><p>${t.t}</p></div>
+   <div class="block g"><h3>Gap</h3><p>${t.g}</p></div>
+   <div class="block"><h3>Next step</h3><p>${t.x}</p></div>
+   <p class="src">Key sources: ${t.s}</p>`;
+}
+pick(0);
+
+const C=[
+ ['1','The problem','Visitors and operators cannot check claims themselves','Community-based tourism runs on payment records, reviews and service claims that neither side can easily verify. Blockchain is often proposed as the fix, yet a tamper-evident record only shows a claim was not altered, not that it was true.'],
+ ['847','Identification','Scopus records, 2020–2026','442 journal articles, 361 conference papers and 44 reviews on tourism blockchain, with no duplicates. Separate streams cover acceptance and trust models and Malaysian community tourism (25 records).'],
+ ['504','Screening','Title and abstract screening','20 non-English and 323 off-topic records were removed first. Of 504 screened, 248 were excluded with a recorded reason. A second reviewer checked a 10% sample (κ = 0.76).'],
+ ['256','Evidence map','149 articles, 98 conference papers, 9 reviews','Led by 90 design or prototype studies and 45 quantitative studies. None of the 256 is set in Malaysia or Sarawak. Thirteen Malaysian community-tourism reports were included after full-text reading.'],
+ ['5','Themes','Where the evidence is, and is not','Acceptance evidence is abundant but comes from consumers and firms. Verification evidence is strongest for bookings and weakest for service authenticity. Local evidence is rich on readiness and trust, and silent on blockchain.'],
+ ['4','Gaps','A mismatch between evidence and need','No blockchain acceptance study with Malaysian community-tourism practitioners. No field evaluation for review or service authenticity. Intention measured, not use. Thin evidence on tourism cooperatives.'],
+ ['8','Model','Propositions P1 to P8','Acceptance constructs are joined with verification assurance, governance credibility and practitioner trust, assessed separately for bookings, reviews and service claims. Every path is a hypothesis.'],
+ ['6','Agenda','What to test next in Sarawak','Validate measures with homestay operators and koperasi; compare tasks; pilot with usage logs; evaluate effects on disputes; co-design governance; follow who participates and who benefits.']
+];
+const clist=document.getElementById('clist');
+C.forEach((c,i)=>{if(i){const a=document.createElement('div');a.className='arrow';a.textContent='▼';clist.appendChild(a)}
+  const b=document.createElement('button');b.className='step';b.innerHTML=`<span class="k">${c[0]}</span><span><b>${c[1]}</b><small>${c[2]}</small></span>`;
+  b.addEventListener('click',()=>cpick(i));clist.appendChild(b)});
+function cpick(i){[...clist.querySelectorAll('.step')].forEach((b,j)=>b.classList.toggle('sel',j===i));const c=C[i];
+  document.getElementById('cpanel').innerHTML=`<span class="pill">Link ${i+1} of ${C.length}</span><h2>${c[1]}</h2><div class="block"><h3>${c[2]}</h3><p>${c[3]}</p></div>
+  <p class="src">${i<C.length-1?'Leads to: '+C[i+1][1]:'End of the chain: the model must be tested with practitioners before any claim about improved trust is made.'}</p>`}
+cpick(0);
+
+const B={VA:[20,40,'Verification','assurance',1],GC:[20,180,'Governance','credibility',1],PT:[250,110,'Practitioner','trust',1],
+ PE:[480,40,'Performance','expectancy',0],EE:[250,290,'Effort','expectancy',0],IU:[480,220,'Intention','to use',0],OU:[720,220,'Observed','use',0],FC:[720,350,'Facilitating','conditions',0]};
+const W=160,H=64,ms=document.getElementById('msvg');
+const E=[['P1','VA','PT','Verification assurance → practitioner trust','Rests on Themes 2 to 4: a record is only useful if practitioners can examine its source, evidence and status.'],
+ ['P2','GC','PT','Governance credibility → practitioner trust','Rests on Theme 5: trust in Dalat and Lenggong grew from fair rules, reciprocity and credible institutions.'],
+ ['P3','PT','PE','Practitioner trust → performance expectancy','Rests on Theme 1: in Jeju, blockchain trust and transparency shaped expected performance.'],
+ ['P4','PT','IU','Practitioner trust → intention to use','Rests on Theme 1, where trust results are mixed. A null result is plausible (Ullah et al., 2022).'],
+ ['P5','PE','IU','Performance expectancy → intention to use','Rests on Theme 1: expected benefit is the most consistent predictor across studies.'],
+ ['P6','EE','PE','Effort expectancy → performance expectancy and intention','Rests on acceptance theory (Davis, 1989; Venkatesh et al., 2003) and on uneven digital skills in Theme 5.'],
+ ['P6','EE','IU','',''],
+ ['P7','FC','OU','Facilitating conditions → observed use','Rests on Theme 5: operators depend on family help, agencies, training and connectivity at the point of use.'],
+ ['P8','IU','OU','Intention to use → observed use','Rests on the gap that studies measure intention far more often than use.']];
+function anchor(a,b){const A=B[a],Bb=B[b],ax=A[0]+W/2,ay=A[1]+H/2,bx=Bb[0]+W/2,by=Bb[1]+H/2;
+  const dx=bx-ax,dy=by-ay;function edge(x,y,dx,dy){const sx=Math.abs(dx)>0?(W/2)/Math.abs(dx):1e9,sy=Math.abs(dy)>0?(H/2)/Math.abs(dy):1e9,s=Math.min(sx,sy);return[x+dx*s,y+dy*s]}
+  const p=edge(ax,ay,dx,dy),q=edge(bx,by,-dx,-dy);return[p,q]}
+const edges=E.map(e=>{const[p,q]=anchor(e[1],e[2]);const l=el('line',{class:'edge',x1:p[0],y1:p[1],x2:q[0],y2:q[1]},ms);
+  el('text',{class:'elab',x:(p[0]+q[0])/2+6,y:(p[1]+q[1])/2-6},ms,e[0]);return l});
+for(const k in B){const b=B[k],g=el('g',{class:'box'+(b[4]?' new':'')},ms);el('rect',{x:b[0],y:b[1],width:W,height:H,rx:10},g);
+  el('text',{x:b[0]+W/2,y:b[1]+28,'text-anchor':'middle'},g,b[2]);el('text',{x:b[0]+W/2,y:b[1]+46,'text-anchor':'middle'},g,b[3])}
+const plist=document.getElementById('plist');const PR=E.filter(e=>e[3]);
+PR.forEach((e,i)=>{const b=document.createElement('button');b.innerHTML=`<b>${e[0]}</b>${e[3]}`;b.addEventListener('click',()=>ppick(i));plist.appendChild(b)});
+function ppick(i){const id=PR[i][0];[...plist.children].forEach((b,j)=>b.classList.toggle('sel',j===i));
+  edges.forEach((l,j)=>l.classList.toggle('hot',E[j][0]===id));
+  document.getElementById('ppanel').innerHTML=`<div class="block t"><h3>${id} · basis in the review</h3><p>${PR[i][4]}</p></div><p class="src">Each proposition should be tested separately for bookings, reviews and service-authenticity claims.</p>`}
+ppick(0);
+
+const Y=[[2020,14,5,1],[2021,11,6,1],[2022,23,9,1],[2023,18,14,1],[2024,23,14,3],[2025,24,27,2],[2026,36,23,0]];
+const yd=document.getElementById('years'),yl=document.getElementById('ylab');
+Y.forEach(y=>{const tot=y[1]+y[2]+y[3],d=document.createElement('div');d.innerHTML=`<span>${tot}</span><i class="r" style="height:${y[3]*2.2}px"></i><i class="c" style="height:${y[2]*2.2}px"></i><i class="j" style="height:${y[1]*2.2}px"></i>`;yd.appendChild(d);
+  const s=document.createElement('span');s.textContent=y[0];yl.appendChild(s)});
+function bars(id,data){const max=Math.max(...data.map(d=>d[1])),h=document.getElementById(id);
+  data.forEach(d=>{const r=document.createElement('div');r.className='bar';r.innerHTML=`<span>${d[0]}</span><i style="width:${d[1]/max*100}%"></i><em>${d[1]}</em>`;h.appendChild(r)})}
+bars('types',[['Design or prototype',90],['Quantitative',45],['Conceptual',39],['Review or bibliometric',34],['Qualitative',22],['Mixed methods',7],['Expert or multi-criteria',7],['Experiment',6],['Analytical model',6]]);
+bars('topics',[['Transactions, booking, payments',52],['General overviews',49],['Adoption, acceptance, trust',48],['Data security, privacy, identity',27],['Tokens, NFTs, loyalty',23],['Provenance and authenticity',21],['Sustainability, supply chain',16],['Reviews and reputation',15],['Finance and investment',5]]);
+
+const views=['themes','chain','model','evidence'];
+function show(){const h=location.hash.replace('#','');const v=views.includes(h)?h:'themes';
+  views.forEach(x=>{document.getElementById(x).classList.toggle('on',x===v);document.getElementById('tab-'+x).setAttribute('aria-selected',x===v)})}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{location.hash=b.dataset.v;show()}));
+window.addEventListener('hashchange',show);show();
+</script>
+</body>
+</html>
